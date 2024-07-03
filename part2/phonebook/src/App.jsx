@@ -65,6 +65,11 @@ const App = () => {
             setPersons(persons.map(person => person.id === personToUpdate.id ? personToUpdate : person))
             notify(`Updated phone number for ${personToUpdate.name}`, false)
           })
+          .catch(error => {
+            if (error.response.status == 404) {
+              notify(`Information of ${personToUpdate.name} has already been removed from server`, true)
+            }
+          })
       }
       console.log('PUT phone number', personToUpdate)
       return
