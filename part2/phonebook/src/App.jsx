@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Filter } from './components/Filter'
 import { PersonForm } from './components/PersonForm'
 import { Persons } from './components/Persons'
+import { Notification } from './components/Notification'
 import personService from './services/persons'
 
 const App = () => {
@@ -9,6 +10,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
+  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [isError, setIsError] = useState(false)
 
   useEffect(() => {
     personService.findAll()
@@ -32,6 +35,14 @@ const App = () => {
     console.log('search query', event.target.value);
   }
 
+  const notify = (message, isError) => {
+    setIsError(isError)
+    setNotificationMessage(message)
+    setTimeout(() => {
+      setNotificationMessage(null)
+    }, 3000);
+  }
+
   const filterPerson = person => {
     return person.name.match(new RegExp(searchQuery, 'gi')) != null
   }
@@ -52,6 +63,7 @@ const App = () => {
         personService.updatePerson(personToUpdate)
           .then(() => {
             setPersons(persons.map(person => person.id === personToUpdate.id ? personToUpdate : person))
+            notify(`Updated phone number for ${personToUpdate.name}`, false)
           })
       }
       console.log('PUT phone number', personToUpdate)
@@ -62,10 +74,10 @@ const App = () => {
       .then(response => {
         console.log('POST response', response);
         setPersons(persons.concat(response.data))
+        notify(`Added ${newPerson.name}`, false)
+        setNewName('')
+        setNewNumber('')
       })
-
-    setNewName('')
-    setNewNumber('')
   }
 
   const deletePerson = id => {
@@ -79,9 +91,9 @@ const App = () => {
     }
   }
 
-
   return (
     <div>
+      <Notification message={notificationMessage} isError={isError} />
       <h1>Phonebook</h1>
       <Filter query={searchQuery} onChange={handleChangeSearchQuery} />
       <h2>add a new</h2>
