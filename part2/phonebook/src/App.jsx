@@ -15,6 +15,7 @@ const App = () => {
   ])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
 
   const handleChangeName = (event) => {
     setNewName(event.target.value)
@@ -22,6 +23,10 @@ const App = () => {
 
   const handleChangeNumber = (event) => {
     setNewNumber(event.target.value)
+  }
+
+  const handleChangeSearchQuery = (event) => {
+    setSearchQuery(event.target.value)
   }
 
   const addPerson = (event) => {
@@ -53,7 +58,12 @@ const App = () => {
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
+      <div>
+        filter shown with
+        <input value={searchQuery} onChange={handleChangeSearchQuery} />
+      </div>
+      <h2>add a new</h2>
       <form onSubmit={addPerson}>
         <table>
           <tr>
@@ -69,13 +79,16 @@ const App = () => {
           <button type="submit">add</button>
         </div>
       </form>
-      <h2>Numbers</h2>
+      <h2>numbers</h2>
       <table>
-        {persons.map(person => <Person
-          key={person.name}
-          name={person.name}
-          number={person.number}
-        />)}
+        {persons
+          .filter(person => searchQuery === '' || person.name.match(new RegExp(searchQuery, 'gi')) != null)
+          .map(person =>
+            <Person
+              key={person.name}
+              name={person.name}
+              number={person.number}
+            />)}
       </table>
     </div>
   )
