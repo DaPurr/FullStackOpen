@@ -54,8 +54,24 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 app.post('/api/persons', (request, response) => {
+    const personPayload = request.body
+    if (!personPayload.name) {
+        response.status(400).send({ message: 'name is required' })
+        return
+    }
+
+    if (!personPayload.number) {
+        response.status(400).send({ message: 'number is required' })
+        return
+    }
+
+    if (persons.some(person => person.name === personPayload.name)) {
+        response.status(409).send({ message: `person with name ${personPayload.name} already exists` })
+        return
+    }
+
     const id = String(generateId())
-    const person = { ...request.body, id }
+    const person = { ...personPayload, id }
     console.log(id, person);
     persons = persons.concat(person)
     response.status(204).end()
