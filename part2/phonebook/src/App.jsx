@@ -58,8 +58,8 @@ const App = () => {
 
     const existingPerson = persons.find(person => person.name === newPerson.name)
     if (existingPerson) {
-      const personToUpdate = { ...newPerson, id: existingPerson.id }
-      if (window.confirm(`${personToUpdate.name} is already added to phonebook, replace the old number with a new one?`)) {
+      if (window.confirm(`${newName.name} is already added to phonebook, replace the old number with a new one?`)) {
+        const personToUpdate = { ...newPerson, id: existingPerson.id }
         personService.updatePerson(personToUpdate)
           .then(() => {
             setPersons(persons.map(person => person.id === personToUpdate.id ? personToUpdate : person))
@@ -71,18 +71,16 @@ const App = () => {
             }
           })
       }
-      console.log('PUT phone number', personToUpdate)
-      return
+    } else {
+      personService.addPerson(newPerson)
+        .then(response => {
+          console.log('POST response', response);
+          setPersons(persons.concat(response.data))
+          notify(`Added ${newPerson.name}`, false)
+          setNewName('')
+          setNewNumber('')
+        })
     }
-
-    personService.addPerson(newPerson)
-      .then(response => {
-        console.log('POST response', response);
-        setPersons(persons.concat(response.data))
-        notify(`Added ${newPerson.name}`, false)
-        setNewName('')
-        setNewNumber('')
-      })
   }
 
   const deletePerson = id => {
