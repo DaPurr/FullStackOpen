@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const Statistic = ({ text, value }) => {
+const StatisticLine = ({ text, value }) => {
   return (
     <p>{text} {value}</p>
   )
@@ -22,13 +22,19 @@ const Statistics = ({ good, neutral, bad }) => {
   return (
     <div>
       <h1>statistics</h1>
-      <Statistic text="good" value={good} />
-      <Statistic text="neutral" value={neutral} />
-      <Statistic text="bad" value={bad} />
-      <Statistic text="all" value={totalFeedback} />
-      <Statistic text="average" value={calculateAverage()} />
-      <Statistic text="positive" value={calculatePercentagePositive()} />
+      <StatisticLine text="good" value={good} />
+      <StatisticLine text="neutral" value={neutral} />
+      <StatisticLine text="bad" value={bad} />
+      <StatisticLine text="all" value={totalFeedback} />
+      <StatisticLine text="average" value={calculateAverage()} />
+      <StatisticLine text="positive" value={calculatePercentagePositive()} />
     </div>
+  )
+}
+
+const Button = ({ text, onClickCallback }) => {
+  return (
+    <button onClick={onClickCallback}>{text}</button>
   )
 }
 
@@ -46,9 +52,9 @@ const App = () => {
   return (
     <div>
       <h1>give feedback</h1>
-      <button onClick={incrementGood}>good</button>
-      <button onClick={incrementNeutral}>neutral</button>
-      <button onClick={incrementBad}>bad</button>
+      <Button text="good" onClickCallback={incrementGood} />
+      <Button text="neutral" onClickCallback={incrementNeutral} />
+      <Button text="bad" onClickCallback={incrementBad} />
       {hasFeedback && <Statistics good={good} neutral={neutral} bad={bad} />}
     </div>
   )
