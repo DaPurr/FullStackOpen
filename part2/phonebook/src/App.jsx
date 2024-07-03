@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Filter } from './components/Filter'
 import { PersonForm } from './components/PersonForm'
 import { Persons } from './components/Persons'
+import personService from './services/persons'
 import axios from 'axios'
 
 const App = () => {
@@ -50,7 +51,12 @@ const App = () => {
       return
     }
 
-    setPersons(persons.concat(newPerson))
+    personService.addPerson(newPerson)
+      .then(response => {
+        console.log('POST response', response);
+        setPersons(persons.concat(response.data))
+      })
+
     setNewName('')
     setNewNumber('')
   }
