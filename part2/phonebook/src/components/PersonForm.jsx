@@ -17,6 +17,5 @@ export const PersonForm = ({ newPersonNumber, newPersonName, onSubmit, onChangeN
                 <button type="submit">add</button>
             </div>
         </form>
-
     )
 }

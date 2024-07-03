@@ -3,7 +3,6 @@ import { Filter } from './components/Filter'
 import { PersonForm } from './components/PersonForm'
 import { Persons } from './components/Persons'
 import personService from './services/persons'
-import axios from 'axios'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -12,7 +11,7 @@ const App = () => {
   const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
-    axios.get('http://localhost:3001/persons')
+    personService.findAll()
       .then(response => {
         setPersons(response.data)
         console.log('using effect', response);
@@ -46,8 +45,16 @@ const App = () => {
 
     const newPerson = { name: newName, number: newNumber }
 
-    if (persons.some(person => person.name === newPerson.name)) {
-      alert(`${newPerson.name} is already added to the phonebook`)
+    const existingPerson = persons.find(person => person.name === newPerson.name)
+    if (existingPerson) {
+      const personToUpdate = { ...newPerson, id: existingPerson.id }
+      if (window.confirm(`${personToUpdate.name} is already added to phonebook, replace the old number with a new one?`)) {
+        personService.updatePerson(personToUpdate)
+          .then(() => {
+            setPersons(persons.map(person => person.id === personToUpdate.id ? personToUpdate : person))
+          })
+      }
+      console.log('PUT phone number', personToUpdate)
       return
     }
 
