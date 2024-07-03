@@ -1,13 +1,7 @@
 import { useState } from 'react'
-
-const Person = ({ name, number }) => {
-  return (
-    <tr>
-      <td>{name}</td>
-      <td>{number}</td>
-    </tr>
-  )
-}
+import { Filter } from './components/Filter'
+import { PersonForm } from './components/PersonForm'
+import { Persons } from './components/Persons'
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -27,25 +21,24 @@ const App = () => {
 
   const handleChangeSearchQuery = (event) => {
     setSearchQuery(event.target.value)
+
+    console.log('search query', event.target.value);
+  }
+
+  const filterPerson = person => {
+    return person.name.match(new RegExp(searchQuery, 'gi')) != null
   }
 
   const addPerson = (event) => {
     event.preventDefault()
-    if (newName === '') {
-      alert('Fill in a name please')
-      return
-    }
-    const newPerson = {
-      name: newName,
-      number: newNumber
-    }
-
-    if (newNumber === '') {
-      alert('Fill in a phone number please')
+    if (newName === '' || newNumber === '') {
+      alert('Please fill in both name and number')
       return
     }
 
-    if (persons.find(person => person.name === newPerson.name)) {
+    const newPerson = { name: newName, number: newNumber }
+
+    if (persons.some(person => person.name === newPerson.name)) {
       alert(`${newPerson.name} is already added to the phonebook`)
       return
     }
@@ -53,43 +46,22 @@ const App = () => {
     setPersons(persons.concat(newPerson))
     setNewName('')
     setNewNumber('')
-    setNewNumber('')
   }
 
   return (
     <div>
       <h1>Phonebook</h1>
-      <div>
-        filter shown with
-        <input value={searchQuery} onChange={handleChangeSearchQuery} />
-      </div>
+      <Filter query={searchQuery} onChange={handleChangeSearchQuery} />
       <h2>add a new</h2>
-      <form onSubmit={addPerson}>
-        <table>
-          <tr>
-            <td>name:</td>
-            <td><input value={newName} onChange={handleChangeName} /></td>
-          </tr>
-          <tr>
-            <td>number:</td>
-            <td><input value={newNumber} onChange={handleChangeNumber} /></td>
-          </tr>
-        </table>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm
+        newPersonName={newName}
+        newPersonNumber={newNumber}
+        onSubmit={addPerson}
+        onChangeName={handleChangeName}
+        onChangeNumber={handleChangeNumber}
+      />
       <h2>numbers</h2>
-      <table>
-        {persons
-          .filter(person => searchQuery === '' || person.name.match(new RegExp(searchQuery, 'gi')) != null)
-          .map(person =>
-            <Person
-              key={person.name}
-              name={person.name}
-              number={person.number}
-            />)}
-      </table>
+      <Persons persons={persons} filter={filterPerson} />
     </div>
   )
 }
