@@ -1,0 +1,20 @@
+@baseUrl = http://localhost:3001/api
+@name = Nem
+@number = 123
+
+##
+
+GET {{baseUrl}}/persons
+
+###
+
+POST {{baseUrl}}/persons
+Content-Type: application/json
+{
+    "name": "{{name}}",
+    "number": "{{number}}"
+}
+
+###
+
+DELETE {{baseUrl}}/persons/6091
