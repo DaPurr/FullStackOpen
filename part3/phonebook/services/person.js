@@ -17,6 +17,10 @@ const save = person => {
     return savedPerson.save()
 }
 
+const updateById = (id, updatedPerson) => {
+    return Person.findByIdAndUpdate(id, updatedPerson, { new: true })
+}
+
 const generateId = () => {
     return Math.floor(Math.random() * 10000)
 }
@@ -26,4 +30,5 @@ module.exports = {
     findById,
     deleteById,
     save,
+    updateById,
 }
