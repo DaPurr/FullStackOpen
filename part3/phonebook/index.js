@@ -1,7 +1,9 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 const app = express()
+const Person = require('./models/person')
 
 morgan.token('body', request => JSON.stringify(request.body))
 
@@ -34,61 +36,66 @@ let persons = [
 ]
 
 app.get('/info', (request, response) => {
-    response.send(`
-        <p>Phonebook has info for ${persons.length} people</p>
-        <p>${new Date()}</p>
-        `)
+    Person.find({})
+        .then(people => {
+            response.send(`
+            <p>Phonebook has info for ${persons.length} people</p>
+            <p>${new Date()}</p>`)
+        })
 })
 
 app.get('/api/persons', (request, response) => {
-    response.json(persons)
+    Person.find({})
+        .then(people => {
+            response.json(people)
+        })
 })
 
 app.get('/api/persons/:id', (request, response) => {
-    const id = request.params.id
-    const person = persons.find(person => person.id === id);
-    if (person) {
-        response.json(person)
-    } else {
-        response.status(404).end()
-    }
+    Person.findById(request.params.id)
+        .then(person => response.json(person))
+        .catch(() => response.status(404).json({ error: 'person not found' }))
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-    const id = request.params.id
-    persons = persons.filter(person => person.id !== id)
-    response.status(204).end()
+    Person.findByIdAndDelete(request.params.id).then(() => response.status(204).end())
 })
 
 app.post('/api/persons', (request, response) => {
     const personPayload = request.body
+    if (personPayload === undefined) {
+        return response.status(400).json({ error: 'content missing' })
+    }
     if (!personPayload.name) {
-        response.status(400).send({ message: 'name is required' })
-        return
+        return response.status(400).send({ message: 'name is required' })
     }
 
     if (!personPayload.number) {
-        response.status(400).send({ message: 'number is required' })
-        return
+        return response.status(400).send({ message: 'number is required' })
     }
 
     if (persons.some(person => person.name === personPayload.name)) {
-        response.status(409).send({ message: `person with name ${personPayload.name} already exists` })
-        return
+        return response.status(409).send({ message: `person with name ${personPayload.name} already exists` })
     }
 
     const id = String(generateId())
-    const person = { ...personPayload, id }
-    console.log(id, person);
-    persons = persons.concat(person)
-    response.status(201).json(person)
+    const savedPerson = new Person({
+        id,
+        name: personPayload.name,
+        number: personPayload.number
+    })
+    console.log('saving', id, savedPerson);
+    savedPerson.save()
+        .then(() => {
+            response.status(201).json(savedPerson)
+        })
 })
 
 const generateId = () => {
     return Math.floor(Math.random() * 10000)
 }
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 })

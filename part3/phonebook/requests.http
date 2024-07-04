@@ -17,4 +17,4 @@ Content-Type: application/json
 
 ###
 
-DELETE {{baseUrl}}/persons/6091
+DELETE {{baseUrl}}/persons/6686f6fa0c0ee372c0e4b247
