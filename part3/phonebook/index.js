@@ -3,7 +3,7 @@ const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 const app = express()
-const Person = require('./models/person')
+const personService = require('./services/person')
 
 morgan.token('body', request => JSON.stringify(request.body))
 
@@ -36,29 +36,29 @@ let persons = [
 ]
 
 app.get('/info', (request, response) => {
-    Person.find({})
+    personService.findAll()
         .then(people => {
             response.send(`
-            <p>Phonebook has info for ${persons.length} people</p>
+            <p>Phonebook has info for ${people.length} people</p>
             <p>${new Date()}</p>`)
         })
 })
 
 app.get('/api/persons', (request, response) => {
-    Person.find({})
+    personService.findAll()
         .then(people => {
             response.json(people)
         })
 })
 
 app.get('/api/persons/:id', (request, response) => {
-    Person.findById(request.params.id)
+    personService.findById(request.params.id)
         .then(person => response.json(person))
         .catch(() => response.status(404).json({ error: 'person not found' }))
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-    Person.findByIdAndDelete(request.params.id).then(() => response.status(204).end())
+    personService.deleteById(request.params.id).then(() => response.status(204).end())
 })
 
 app.post('/api/persons', (request, response) => {
@@ -78,22 +78,13 @@ app.post('/api/persons', (request, response) => {
         return response.status(409).send({ message: `person with name ${personPayload.name} already exists` })
     }
 
-    const id = String(generateId())
-    const savedPerson = new Person({
-        id,
+    personService.save({
         name: personPayload.name,
         number: personPayload.number
+    }).then((savedPerson) => {
+        response.status(201).json(savedPerson)
     })
-    console.log('saving', id, savedPerson);
-    savedPerson.save()
-        .then(() => {
-            response.status(201).json(savedPerson)
-        })
 })
-
-const generateId = () => {
-    return Math.floor(Math.random() * 10000)
-}
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
