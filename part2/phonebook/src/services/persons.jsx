@@ -1,12 +1,20 @@
 import axios from "axios"
 
-const findAll = () => axios.get('http://localhost:3001/persons')
+const baseUrl = '/api/persons'
 
-const addPerson = person => axios.post('http://localhost:3001/persons', person)
+const findAll = () => axios.get(`${baseUrl}`)
+    .then(response => {
+        if (!Array.isArray(response.data)) {
+            return Promise.reject(new TypeError('Expected array of {name, number}'))
+        }
+        return response.data
+    })
 
-const deletePerson = id => axios.delete(`http://localhost:3001/persons/${id}`)
+const addPerson = person => axios.post(`${baseUrl}`, person)
 
-const updatePerson = person => axios.put(`http://localhost:3001/persons/${person.id}`, person)
+const deletePerson = id => axios.delete(`${baseUrl}/${id}`)
+
+const updatePerson = person => axios.put(`${baseUrl}/${person.id}`, person)
 
 export default {
     findAll,

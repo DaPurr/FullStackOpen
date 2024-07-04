@@ -15,9 +15,9 @@ const App = () => {
 
   useEffect(() => {
     personService.findAll()
-      .then(response => {
-        setPersons(response.data)
-        console.log('using effect', response);
+      .then(persons => {
+        setPersons(persons)
+        console.log('using effect', persons);
       })
   }, [])
 
