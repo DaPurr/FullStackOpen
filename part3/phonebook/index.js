@@ -5,6 +5,7 @@ const app = express()
 
 morgan.token('body', request => JSON.stringify(request.body))
 
+app.use(express.static('dist'))
 app.use(cors())
 app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
@@ -80,7 +81,7 @@ app.post('/api/persons', (request, response) => {
     const person = { ...personPayload, id }
     console.log(id, person);
     persons = persons.concat(person)
-    response.status(204).end()
+    response.status(201).json(person)
 })
 
 const generateId = () => {
