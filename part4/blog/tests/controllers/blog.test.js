@@ -1,4 +1,4 @@
-const { test, after, before, describe } = require('node:test')
+const { test, after, beforeEach, describe } = require('node:test')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
@@ -28,15 +28,17 @@ const initialBlogs = [
   },
 ]
 
-before(async () => {
+beforeEach(async () => {
   await Blog.deleteMany()
-  await Blog.insertMany(initialBlogs)
 })
 
 after(() => mongoose.connection.close())
 
 describe('blogs REST integration tests', () => {
   test('blogs are returned as JSON', async () => {
+    // given
+    await Blog.insertMany(initialBlogs)
+    // when then
     await api
       .get('/api/blogs')
       .expect(200)
@@ -49,10 +51,37 @@ describe('blogs REST integration tests', () => {
   })
 
   test('given a GET request, returned entities should have id instead of _id field', async () => {
+    // given
+    await Blog.insertMany(initialBlogs)
+    // when
     const response = await api.get('/api/blogs')
+    // then
     response.body.forEach(blog => {
       assert.strictEqual(blog._id, undefined)
       assert.notStrictEqual(blog.id, undefined)
     })
+  })
+
+  test('given a valid POST request, store the blog in the database', async () => {
+    // given
+    const newBlog = {
+      title: 'Harry Potter and the whatever it is',
+      author: 'JK',
+      url: 'www.hpfans.magic',
+      likes: 9001,
+    }
+    // when
+    const postResponse = await api
+      .post('/api/blogs')
+      .set('Content-Type', 'application/json')
+      .send(newBlog)
+    assert.strictEqual(postResponse.status, 201)
+    // then
+    const getResponse = await api.get('/api/blogs')
+    assert.strictEqual(getResponse.status, 200)
+    // eslint-disable-next-line no-unused-vars
+    const blogsWithoutId = getResponse.body.map(({ id, ...rest }) => rest)
+    assert.strictEqual(blogsWithoutId.length, 1)
+    assert.deepStrictEqual(blogsWithoutId[0], newBlog)
   })
 })
