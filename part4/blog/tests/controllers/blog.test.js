@@ -104,4 +104,27 @@ describe('blogs REST integration tests', () => {
     const blogs = getResponse.body
     assert.strictEqual(blogs[0].likes, 0)
   })
+
+  test('given missing title or url, then return bad request', async () => {
+    // given
+    const newBlog1 = {
+      title: 'Harry Potter and the whatever it is',
+      author: 'JK',
+    }
+    const newBlog2 = {
+      author: 'JK',
+      url: 'www.hpfans.magic',
+    }
+    // when
+    const postResponse1 = await api
+      .post('/api/blogs')
+      .set('Content-Type', 'application/json')
+      .send(newBlog1)
+    assert.strictEqual(postResponse1.status, 400)
+    const postResponse2 = await api
+      .post('/api/blogs')
+      .set('Content-Type', 'application/json')
+      .send(newBlog2)
+    assert.strictEqual(postResponse2.status, 400)
+  })
 })
