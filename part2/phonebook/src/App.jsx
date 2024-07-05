@@ -60,25 +60,38 @@ const App = () => {
     if (existingPerson) {
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
         const personToUpdate = { ...newPerson, id: existingPerson.id }
+        console.log('about to call update');
         personService.updatePerson(personToUpdate)
-          .then(() => {
-            setPersons(persons.map(person => person.id === personToUpdate.id ? personToUpdate : person))
-            notify(`Updated phone number for ${personToUpdate.name}`, false)
+          .then(response => {
+            if (response.status == 200) {
+              setPersons(persons.map(person => person.id === personToUpdate.id ? personToUpdate : person))
+              notify(`Updated phone number for ${personToUpdate.name}`, false)
+            } else {
+              notify(response.data)
+            }
           })
           .catch(error => {
+            console.log('error', error);
             if (error.response.status == 404) {
               notify(`Information of ${personToUpdate.name} has already been removed from server`, true)
+            } else if (error.response.status == 400) {
+              console.log('400', error);
+              notify(error.response, true)
+            } else {
+              notify(error.response, true)
             }
           })
       }
     } else {
       personService.addPerson(newPerson)
         .then(response => {
-          console.log('POST response', response);
           setPersons(persons.concat(response.data))
           notify(`Added ${newPerson.name}`, false)
           setNewName('')
           setNewNumber('')
+        })
+        .catch(error => {
+          notify(error.response.data.error, true)
         })
     }
   }

@@ -18,7 +18,7 @@ const save = person => {
 }
 
 const updateById = (id, updatedPerson) => {
-    return Person.findByIdAndUpdate(id, updatedPerson, { new: true })
+    return Person.findByIdAndUpdate(id, updatedPerson, { new: true, runValidators: true, context: 'query' })
 }
 
 const generateId = () => {

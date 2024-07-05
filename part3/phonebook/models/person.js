@@ -10,8 +10,13 @@ mongoose.connect(databaseUrl)
     .catch(error => console.log('error connecting to MongoDB', error.message))
 
 const personSchema = new mongoose.Schema({
-    name: String,
-    number: Number
+    name: {
+        type: String,
+        minLength: 3
+    },
+    number: {
+        type: Number,
+    }
 })
 
 personSchema.set('toJSON', {

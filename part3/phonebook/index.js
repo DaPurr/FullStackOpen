@@ -7,7 +7,7 @@ const personService = require('./services/person')
 
 morgan.token('body', request => JSON.stringify(request.body))
 
-app.use(express.static('dist'))
+// app.use(express.static('dist'))
 app.use(cors())
 app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
@@ -67,7 +67,7 @@ app.delete('/api/persons/:id', (request, response) => {
     personService.deleteById(request.params.id).then(() => response.status(204).end())
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const personPayload = request.body
     if (personPayload === undefined) {
         return response.status(400).json({ error: 'content missing' })
@@ -87,9 +87,11 @@ app.post('/api/persons', (request, response) => {
     personService.save({
         name: personPayload.name,
         number: personPayload.number
-    }).then((savedPerson) => {
-        response.status(201).json(savedPerson)
     })
+        .then((savedPerson) => {
+            response.status(201).json(savedPerson)
+        })
+        .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
@@ -108,7 +110,9 @@ const errorHandler = (error, request, response, next) => {
     console.log(error.message);
 
     if (error.name === 'CastError') {
-        response.status(400).send({ error: 'malformed id' })
+        return response.status(400).send({ error: 'malformed id' })
+    } else if (error.name === 'ValidationError') {
+        return response.status(400).json({ error: error.message })
     }
 
     next(error)
