@@ -195,3 +195,26 @@ describe('most blogs', () => {
     })
   })
 })
+
+describe('most likes', () => {
+  test('when there is only one blog, that author has most likes', () => {
+    assert.deepStrictEqual(listHelper.mostLikes(listWithOneBlog), {
+      author: 'Edsger W. Dijkstra',
+      likes: 5,
+    })
+  })
+
+  test('when there are multiple blogs, the author with most likes is returned', () => {
+    assert.deepStrictEqual(listHelper.mostLikes(listWithFourBlogs), {
+      author: 'Michael Chan',
+      likes: 14,
+    })
+  })
+
+  test('when there is a blog with missing author, then it is ignored', () => {
+    assert.deepStrictEqual(listHelper.mostLikes(listWithMissingAuthorBlogs), {
+      author: 'Michael Chan',
+      likes: 14,
+    })
+  })
+})

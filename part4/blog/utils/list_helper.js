@@ -26,9 +26,26 @@ const mostBlogs = blogs => {
     : undefined
 }
 
+const mostLikes = blogs => {
+  const authorLikes = _.reduce(
+    blogs,
+    (accum, blog) => {
+      accum[blog.author] = (accum[blog.author] || 0) + blog.likes
+      return accum
+    },
+    {}
+  )
+
+  const topAuthorLikes = _.maxBy(_.toPairs(authorLikes), pair => pair[1])
+  return topAuthorLikes
+    ? { author: topAuthorLikes[0], likes: topAuthorLikes[1] }
+    : undefined
+}
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
   mostBlogs,
+  mostLikes,
 }
