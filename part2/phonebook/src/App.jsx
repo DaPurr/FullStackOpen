@@ -71,15 +71,7 @@ const App = () => {
             }
           })
           .catch(error => {
-            console.log('error', error);
-            if (error.response.status == 404) {
-              notify(`Information of ${personToUpdate.name} has already been removed from server`, true)
-            } else if (error.response.status == 400) {
-              console.log('400', error);
-              notify(error.response, true)
-            } else {
-              notify(error.response, true)
-            }
+            notify(error.response.data.error, true)
           })
       }
     } else {
