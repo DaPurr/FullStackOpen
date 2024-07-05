@@ -47,4 +47,12 @@ describe('blogs REST integration tests', () => {
     const blogsWithoutIds = contents.map(({ id, ...rest }) => rest)
     assert.deepStrictEqual(blogsWithoutIds, initialBlogs)
   })
+
+  test('given a GET request, returned entities should have id instead of _id field', async () => {
+    const response = await api.get('/api/blogs')
+    response.body.forEach(blog => {
+      assert.strictEqual(blog._id, undefined)
+      assert.notStrictEqual(blog.id, undefined)
+    })
+  })
 })
