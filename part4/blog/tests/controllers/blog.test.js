@@ -84,4 +84,24 @@ describe('blogs REST integration tests', () => {
     assert.strictEqual(blogsWithoutId.length, 1)
     assert.deepStrictEqual(blogsWithoutId[0], newBlog)
   })
+
+  test('given a POST without likes, default to 0', async () => {
+    // given
+    const newBlog = {
+      title: 'Harry Potter and the whatever it is',
+      author: 'JK',
+      url: 'www.hpfans.magic',
+    }
+    // when
+    const postResponse = await api
+      .post('/api/blogs')
+      .set('Content-Type', 'application/json')
+      .send(newBlog)
+    assert.strictEqual(postResponse.status, 201)
+    // then
+    const getResponse = await api.get('/api/blogs')
+    assert.strictEqual(getResponse.status, 200)
+    const blogs = getResponse.body
+    assert.strictEqual(blogs[0].likes, 0)
+  })
 })
