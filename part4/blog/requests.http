@@ -1,12 +1,12 @@
-@baseUrl = http://localhost:3003/api/blogs
+@baseUrl = http://localhost:3003/api
 
 ### Get all blogs
 
-GET {{baseUrl}}
+GET {{baseUrl}}/blogs
 
 ### Create new blog
 
-POST {{baseUrl}}
+POST {{baseUrl}}/blogs
 Content-Type: application/json
 {
   "title": "Awesome Blog 2",
@@ -17,7 +17,7 @@ Content-Type: application/json
 
 ### Update blog
 
-PUT {{baseUrl}}/668812eaa50070c4f3cd2649
+PUT {{baseUrl}}/blogs/668812eaa50070c4f3cd2649
 Content-Type: application/json
 {
   "title": "Update",
@@ -25,3 +25,17 @@ Content-Type: application/json
   "url": "Another",
   "likes": 10000
 }
+
+### Add user
+
+POST {{baseUrl}}/users
+Content-Type: application/json
+{
+  "username": "Nemmie",
+  "password": "pass",
+  "name": "Nem"
+}
+
+### Get all users
+
+GET {{baseUrl}}/users
