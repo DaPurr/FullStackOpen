@@ -145,4 +145,35 @@ describe('blogs REST integration tests', () => {
     const actualBlogs = await Blog.find({})
     assert.strictEqual(actualBlogs.length, 0)
   })
+
+  test('given an updated blog sent with a PUT request, then update the blog accordingly', async () => {
+    // given
+    const existingBlog = {
+      title: 'Harry Potter and the whatever it is',
+      author: 'JK',
+      url: 'www.hpfans.magic',
+    }
+    const updatedBlog = {
+      title: 'a better title',
+      author: 'clearly better author',
+      url: 'www.betterwebsite.com',
+    }
+    await new Blog(existingBlog).save()
+    const blogs = await Blog.find({})
+    const blogId = blogs[0].id
+    assert.notStrictEqual(blogId, undefined)
+    // when
+    await api
+      .put(`/api/blogs/${blogId}`)
+      .set('Content-Type', 'application/json')
+      .send(updatedBlog)
+    // then
+    await api.put(`/api/blogs/${blogId}`)
+    const putResponse = await api.get('/api/blogs')
+    const actualBlogs = putResponse.body
+    // eslint-disable-next-line no-unused-vars
+    const actualBlogsWithoutId = actualBlogs.map(({ id, ...rest }) => rest)
+    const actualUpdatedBlog = actualBlogsWithoutId[0]
+    assert.deepStrictEqual(actualUpdatedBlog, updatedBlog)
+  })
 })

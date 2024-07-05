@@ -14,3 +14,14 @@ Content-Type: application/json
   "url": "http://example.com/awesome-blog",
   "likes": 100
 }
+
+### Update blog
+
+PUT {{baseUrl}}/668812eaa50070c4f3cd2649
+Content-Type: application/json
+{
+  "title": "Update",
+  "author": "One more",
+  "url": "Another",
+  "likes": 10000
+}
