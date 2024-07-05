@@ -127,4 +127,22 @@ describe('blogs REST integration tests', () => {
       .send(newBlog2)
     assert.strictEqual(postResponse2.status, 400)
   })
+
+  test('given a DELETE request, then delete specified blog', async () => {
+    // given
+    const newBlog = {
+      title: 'Harry Potter and the whatever it is',
+      author: 'JK',
+      url: 'www.hpfans.magic',
+    }
+    await new Blog(newBlog).save()
+    const blogs = await Blog.find({})
+    const blogId = blogs[0].id
+    assert.notStrictEqual(blogId, undefined)
+    // when
+    await api.delete(`/api/blogs/${blogId}`)
+    // then
+    const actualBlogs = await Blog.find({})
+    assert.strictEqual(actualBlogs.length, 0)
+  })
 })
