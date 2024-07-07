@@ -5,7 +5,7 @@ const {
   requestLogger,
   unknownEndpoint,
   errorHandler,
-  getTokenFrom,
+  tokenExtractor,
 } = require('./utils/middleware')
 const loginRouter = require('./controllers/login')
 const blogRouter = require('./controllers/blog')
@@ -24,7 +24,7 @@ mongoose
 app.use(cors())
 app.use(express.json())
 app.use(requestLogger)
-app.use(getTokenFrom)
+app.use(tokenExtractor)
 
 app.use('/api/login', loginRouter)
 app.use('/api/blogs', blogRouter)

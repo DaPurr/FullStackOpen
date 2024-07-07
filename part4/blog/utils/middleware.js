@@ -32,7 +32,7 @@ const errorHandler = (error, request, response, next) => {
   next()
 }
 
-const getTokenFrom = (request, response, next) => {
+const tokenExtractor = (request, response, next) => {
   const authorization = request.get('authorization')
   request.token =
     authorization && authorization.startsWith('Bearer ')
@@ -48,6 +48,6 @@ const unknownEndpoint = (request, response) => {
 module.exports = {
   requestLogger,
   errorHandler,
-  getTokenFrom,
+  tokenExtractor,
   unknownEndpoint,
 }
