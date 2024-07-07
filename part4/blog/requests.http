@@ -6,8 +6,9 @@ GET {{baseUrl}}/blogs
 ### Create new blog
 POST {{baseUrl}}/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ik5lbW1pZSIsInVzZXJJZCI6IjY2OGE5MGNjZjE3ZTZhNmMwMTJmNmUzYiIsImlhdCI6MTcyMDM1NzMzM30.i8NolafvvS55RNxKL6ViASCn2kNKPoWYlFhOAyVBp5s
 {
-  "title": "Awesome Blog",
+  "title": "Awesome Blog 2",
   "authorId": "668812eaa50070c4f3cd2649",
   "url": "http://example.com/awesome-blog",
   "likes": 100
@@ -23,7 +24,7 @@ Content-Type: application/json
   "likes": 10000
 }
 ### Delete blog
-DELETE {{baseUrl}}/blogs/668a51269421cdc10323d1a7
+DELETE {{baseUrl}}/blogs/668a89010dcca812ff98cae1
 
 ### Add user
 POST {{baseUrl}}/users
@@ -38,4 +39,12 @@ Content-Type: application/json
 GET {{baseUrl}}/users
 
 ### Delete user
-DELETE {{baseUrl}}/users/66884b1feb6ff358eab82ce9
+DELETE {{baseUrl}}/users/66884b821825023960ad2545
+
+### Login
+POST {{baseUrl}}/login
+Content-Type: application/json
+{
+  "username": "Nemmie",
+  "password": "pass"
+}

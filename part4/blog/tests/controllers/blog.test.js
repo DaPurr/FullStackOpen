@@ -4,8 +4,33 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../../app')
 const Blog = require('../../models/blog')
+const User = require('../../models/user')
 
 const api = supertest(app)
+
+const addUser = (username, password) => {
+  const addUserPayload = {
+    username,
+    password,
+    name: username,
+  }
+  return api
+    .post('/api/users')
+    .set('Content-Type', 'application/json')
+    .send(addUserPayload)
+}
+
+const getTokenFor = async (username, password) => {
+  const loginPayload = {
+    username,
+    password,
+  }
+  const loginUserResponse = await api
+    .post('/api/login')
+    .set('Content-Type', 'application/json')
+    .send(loginPayload)
+  return loginUserResponse.body.token
+}
 
 const initialBlogs = [
   {
@@ -29,6 +54,7 @@ const initialBlogs = [
 ]
 
 beforeEach(async () => {
+  await User.deleteMany()
   await Blog.deleteMany()
 })
 
@@ -64,6 +90,8 @@ describe('blogs REST integration tests', () => {
 
   test('given a valid POST request, store the blog in the database', async () => {
     // given
+    await addUser('tester', 'pass')
+    const token = await getTokenFor('tester', 'pass')
     const newBlog = {
       title: 'Harry Potter and the whatever it is',
       author: 'JK',
@@ -74,6 +102,7 @@ describe('blogs REST integration tests', () => {
     const postResponse = await api
       .post('/api/blogs')
       .set('Content-Type', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
     assert.strictEqual(postResponse.status, 201)
     // then
@@ -82,11 +111,21 @@ describe('blogs REST integration tests', () => {
     // eslint-disable-next-line no-unused-vars
     const blogsWithoutId = getResponse.body.map(({ id, ...rest }) => rest)
     assert.strictEqual(blogsWithoutId.length, 1)
-    assert.deepStrictEqual(blogsWithoutId[0], newBlog)
+    assert.deepStrictEqual(
+      {
+        title: blogsWithoutId[0].title,
+        author: blogsWithoutId[0].author,
+        url: blogsWithoutId[0].url,
+        likes: blogsWithoutId[0].likes,
+      },
+      newBlog
+    )
   })
 
   test('given a POST without likes, default to 0', async () => {
     // given
+    await addUser('tester', 'pass')
+    const token = await getTokenFor('tester', 'pass')
     const newBlog = {
       title: 'Harry Potter and the whatever it is',
       author: 'JK',
@@ -96,6 +135,7 @@ describe('blogs REST integration tests', () => {
     const postResponse = await api
       .post('/api/blogs')
       .set('Content-Type', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
     assert.strictEqual(postResponse.status, 201)
     // then
@@ -107,6 +147,8 @@ describe('blogs REST integration tests', () => {
 
   test('given missing title or url, then return bad request', async () => {
     // given
+    await addUser('tester', 'password')
+    const token = await getTokenFor('tester', 'password')
     const newBlog1 = {
       title: 'Harry Potter and the whatever it is',
       author: 'JK',
@@ -119,11 +161,13 @@ describe('blogs REST integration tests', () => {
     const postResponse1 = await api
       .post('/api/blogs')
       .set('Content-Type', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog1)
     assert.strictEqual(postResponse1.status, 400)
     const postResponse2 = await api
       .post('/api/blogs')
       .set('Content-Type', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog2)
     assert.strictEqual(postResponse2.status, 400)
   })
@@ -175,5 +219,40 @@ describe('blogs REST integration tests', () => {
     const actualBlogsWithoutId = actualBlogs.map(({ id, ...rest }) => rest)
     const actualUpdatedBlog = actualBlogsWithoutId[0]
     assert.deepStrictEqual(actualUpdatedBlog, updatedBlog)
+  })
+
+  test('given invalid user to add, then return 400', async () => {
+    // given
+    const userToAdd = { username: 'A', name: 'tooShortUsername', password: 'B' }
+    // when
+    const postResponse = await api
+      .post('/api/users')
+      .set('Content-Type', 'application/json')
+      .send(userToAdd)
+    // then
+    assert.strictEqual(postResponse.status, 400)
+    assert.strictEqual(
+      postResponse.body.error,
+      'username and password have to more than 3 characters long'
+    )
+  })
+})
+
+describe('jwt authentication', () => {
+  test('given no authentication when creating a blog, then return status 401', async () => {
+    // given
+    const blogToPost = {
+      title: 'title',
+      author: 'me',
+      url: 'http://yep.com',
+      likes: 100,
+    }
+    // when
+    const postResponse = await api
+      .post('/api/blogs')
+      .set('Content-Type', 'application/json')
+      .send(blogToPost)
+    // then
+    assert.strictEqual(postResponse.status, 401)
   })
 })

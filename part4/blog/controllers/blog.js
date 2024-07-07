@@ -1,15 +1,24 @@
 const blogRouter = require('express').Router()
+const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const { SECRET } = require('../utils/config')
 
 blogRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({}).populate('user')
+  const blogs = await Blog.find({}).populate({ path: 'user', select: '-blogs' })
   response.json(blogs)
 })
 
 blogRouter.post('/', async (request, response) => {
-  const users = await User.find({})
-  const userToLinkToBlog = users[0]
+  if (!request.token)
+    return response.status(401).json({ error: 'authorization required' })
+  const decodedToken = jwt.verify(request.token, SECRET)
+  if (!decodedToken.userId) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
+  const userToLinkToBlog = await User.findById(decodedToken.userId)
+  if (!userToLinkToBlog)
+    return response.status(401).json({ error: 'authorization required' })
 
   const receivedBlog = request.body.likes
     ? { user: userToLinkToBlog.id, ...request.body }
