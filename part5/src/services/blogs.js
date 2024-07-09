@@ -21,4 +21,8 @@ const addBlog = async (title, author, url) => {
   }
 }
 
-export default { getAll, addBlog }
+const deleteWithId = id => {
+  return axios.delete(`${baseUrl}/${id}`)
+}
+
+export default { getAll, addBlog, deleteWithId }

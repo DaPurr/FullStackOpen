@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import blogService from './services/blogs'
 import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import Blogs from './components/Blogs'
@@ -7,6 +6,7 @@ import BlogForm from './components/BlogForm'
 import Greeter from './components/Greeter'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import blogService from './services/blogs'
 
 const App = () => {
   const [username, setUsername] = useState(null)
@@ -45,6 +45,11 @@ const App = () => {
     setUser(null)
   }
 
+  const deleteWithId = id => {
+    blogService.deleteWithId(id)
+    setBlogs(blogs.filter(blog => blog.id !== id))
+  }
+
   const pushNotification = (message, style) => {
     setNotificationMessage(message)
     setNotificationStyle(style)
@@ -52,6 +57,10 @@ const App = () => {
       setNotificationMessage(null)
       setNotificationStyle(null)
     }, 3000)
+  }
+
+  const onFindAllBlogs = () => {
+    setBlogs(blogService.getAll())
   }
 
   useEffect(() => {
@@ -81,7 +90,12 @@ const App = () => {
             addBlog={blog => setBlogs(blogs.concat(blog))}
           />
         </Togglable>
-        <Blogs blogs={blogs} user={user} handleLogout={handleLogout} />
+        <Blogs
+          blogs={blogs}
+          user={user}
+          handleLogout={handleLogout}
+          deleteWithId={deleteWithId}
+        />
       </div>
     )
   }
