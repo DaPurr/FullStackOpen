@@ -6,15 +6,13 @@ import Blogs from './components/Blogs'
 import BlogForm from './components/BlogForm'
 import Greeter from './components/Greeter'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [username, setUsername] = useState(null)
   const [password, setPassword] = useState(null)
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [blogTitle, setBlogTitle] = useState(null)
-  const [blogAuthor, setBlogAuthor] = useState(null)
-  const [blogUrl, setBlogUrl] = useState(null)
   const [notificationMessage, setNotificationMessage] = useState(null)
   const [notificationStyle, setNotificationStyle] = useState(null)
 
@@ -24,18 +22,6 @@ const App = () => {
 
   const onPasswordChange = event => {
     setPassword(event.target.value)
-  }
-
-  const onBlogTitleChange = event => {
-    setBlogTitle(event.target.value)
-  }
-
-  const onBlogAuthorChange = event => {
-    setBlogAuthor(event.target.value)
-  }
-
-  const onBlogUrlChange = event => {
-    setBlogUrl(event.target.value)
   }
 
   const handleLogin = async event => {
@@ -59,25 +45,6 @@ const App = () => {
     setUser(null)
   }
 
-  const handleSubmitBlog = async event => {
-    event.preventDefault()
-
-    try {
-      const addedBlog = await blogService.addBlog(
-        blogTitle,
-        blogAuthor,
-        blogUrl
-      )
-      setBlogs(blogs.concat(addedBlog))
-      pushNotification(
-        `A new blog ${blogTitle} by ${blogAuthor} added`,
-        'success'
-      )
-    } catch (error) {
-      pushNotification(error, 'error')
-    }
-  }
-
   const pushNotification = (message, style) => {
     setNotificationMessage(message)
     setNotificationStyle(style)
@@ -89,8 +56,6 @@ const App = () => {
 
   useEffect(() => {
     setUser(window.localStorage.getItem('name'))
-
-    blogService.getAll().then(blogs => setBlogs(blogs))
   }, [])
 
   if (user === null) {
@@ -109,12 +74,13 @@ const App = () => {
       <div>
         <Notification message={notificationMessage} type={notificationStyle} />
         <Greeter user={user} handleLogout={handleLogout} />
-        <BlogForm
-          onTitleChange={onBlogTitleChange}
-          onAuthorChange={onBlogAuthorChange}
-          onUrlChange={onBlogUrlChange}
-          handleSubmit={handleSubmitBlog}
-        />
+        <Togglable buttonText={'new note'}>
+          <BlogForm
+            setBlogs={setBlogs}
+            pushNotification={pushNotification}
+            addBlog={blog => setBlogs(blogs.concat(blog))}
+          />
+        </Togglable>
         <Blogs blogs={blogs} user={user} handleLogout={handleLogout} />
       </div>
     )
