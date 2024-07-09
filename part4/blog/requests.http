@@ -6,10 +6,10 @@ GET {{baseUrl}}/blogs
 ### Create new blog
 POST {{baseUrl}}/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ik5lbW1pZSIsInVzZXJJZCI6IjY2OGE5MGNjZjE3ZTZhNmMwMTJmNmUzYiIsImlhdCI6MTcyMDM1NzMzM30.i8NolafvvS55RNxKL6ViASCn2kNKPoWYlFhOAyVBp5s
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ik5lbW1pZSIsInVzZXJJZCI6IjY2OGMwNGQxM2ZmZWE5ZGIwNmI1NzRiNSIsImlhdCI6MTcyMDQ2ODI1OH0.QtJvyR7IihbxmhAeL5Bk4q5khA1eisBV7vpyYkyYSVM
 {
   "title": "Awesome Blog 2",
-  "authorId": "668812eaa50070c4f3cd2649",
+  "author": "Hennie Huisman",
   "url": "http://example.com/awesome-blog",
   "likes": 100
 }
@@ -24,7 +24,7 @@ Content-Type: application/json
   "likes": 10000
 }
 ### Delete blog
-DELETE {{baseUrl}}/blogs/668a89010dcca812ff98cae1
+DELETE {{baseUrl}}/blogs/668c04fd3ffea9db06b574ba
 
 ### Add user
 POST {{baseUrl}}/users
