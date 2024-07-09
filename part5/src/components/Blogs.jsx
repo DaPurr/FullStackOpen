@@ -1,11 +1,15 @@
 import Blog from './Blog'
-import blogService from '../services/blogs'
 
-const Blogs = ({ blogs, deleteWithId }) => {
+const Blogs = ({ blogs, deleteWithId, likeWithId }) => {
   return (
     <div>
       {blogs.map(blog => (
-        <Blog key={blog.id} blog={blog} deleteWithId={deleteWithId} />
+        <Blog
+          key={blog.id}
+          blog={blog}
+          deleteWithId={deleteWithId}
+          likeWithId={likeWithId}
+        />
       ))}
     </div>
   )

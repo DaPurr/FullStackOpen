@@ -50,6 +50,11 @@ const App = () => {
     setBlogs(blogs.filter(blog => blog.id !== id))
   }
 
+  const likeWithId = async id => {
+    await blogService.likeWithId(id)
+    await findAllBlogs()
+  }
+
   const pushNotification = (message, style) => {
     setNotificationMessage(message)
     setNotificationStyle(style)
@@ -59,8 +64,8 @@ const App = () => {
     }, 3000)
   }
 
-  const onFindAllBlogs = () => {
-    setBlogs(blogService.getAll())
+  const findAllBlogs = async () => {
+    setBlogs(await blogService.getAll())
   }
 
   useEffect(() => {
@@ -95,6 +100,7 @@ const App = () => {
           user={user}
           handleLogout={handleLogout}
           deleteWithId={deleteWithId}
+          likeWithId={likeWithId}
         />
       </div>
     )

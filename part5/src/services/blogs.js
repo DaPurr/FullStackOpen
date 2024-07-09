@@ -21,8 +21,12 @@ const addBlog = async (title, author, url) => {
   }
 }
 
-const deleteWithId = id => {
-  return axios.delete(`${baseUrl}/${id}`)
+const deleteWithId = async id => {
+  return await axios.delete(`${baseUrl}/${id}`)
 }
 
-export default { getAll, addBlog, deleteWithId }
+const likeWithId = async id => {
+  return await axios.patch(`${baseUrl}/${id}/like`)
+}
+
+export default { getAll, addBlog, deleteWithId, likeWithId }
