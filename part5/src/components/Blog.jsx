@@ -12,6 +12,12 @@ const Blog = ({ blog, deleteWithId, likeWithId }) => {
     display: isShowDetails ? '' : 'none',
   }
 
+  const onDelete = () => {
+    if (window.confirm(`Remove ${blog.title} by ${blog.author}?`)) {
+      deleteWithId(blog.id)
+    }
+  }
+
   const textExpanded = 'hide'
   const textNotExpanded = 'view'
 
@@ -29,7 +35,7 @@ const Blog = ({ blog, deleteWithId, likeWithId }) => {
       <button onClick={() => setIsShowDetails(!isShowDetails)}>
         {isShowDetails ? textExpanded : textNotExpanded}
       </button>
-      <button onClick={() => deleteWithId(blog.id)}>delete</button>
+      <button onClick={onDelete}>delete</button>
     </div>
   )
 }
