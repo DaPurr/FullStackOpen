@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
-import blogService from '../services/blogs'
-
-const BlogForm = ({ setBlogs, pushNotification, addBlog }) => {
+const BlogForm = ({ addBlog }) => {
   const [blogDetails, setBlogDetails] = useState({
     title: '',
     author: '',
@@ -16,32 +14,9 @@ const BlogForm = ({ setBlogs, pushNotification, addBlog }) => {
 
   const handleSubmit = async event => {
     event.preventDefault()
-
-    if (blogDetails.title.length === 0)
-      return pushNotification('title must be filled in')
-    if (blogDetails.url.length === 0)
-      return pushNotification('author must be filled in')
-
-    try {
-      const addedBlog = await blogService.addBlog(
-        blogDetails.title,
-        blogDetails.author,
-        blogDetails.url
-      )
-      addBlog(addedBlog)
-      pushNotification(
-        `A new blog ${blogDetails.title} by ${blogDetails.author} added`,
-        'success'
-      )
-      setBlogDetails({ title: '', author: '', url: '' })
-    } catch (error) {
-      pushNotification(error.message, 'error')
-    }
+    addBlog(blogDetails.title, blogDetails.author, blogDetails.url)
+    setBlogDetails({ title: '', author: '', url: '' })
   }
-
-  useEffect(() => {
-    blogService.getAll().then(blogs => setBlogs(blogs))
-  }, [])
 
   return (
     <div>
@@ -53,6 +28,7 @@ const BlogForm = ({ setBlogs, pushNotification, addBlog }) => {
             name="title"
             value={blogDetails.title}
             onChange={handleChange}
+            placeholder="title"
           />
         </div>
         <div>
@@ -61,11 +37,17 @@ const BlogForm = ({ setBlogs, pushNotification, addBlog }) => {
             name="author"
             value={blogDetails.author}
             onChange={handleChange}
+            placeholder="author"
           />
         </div>
         <div>
           <label>url:</label>
-          <input name="url" value={blogDetails.url} onChange={handleChange} />
+          <input
+            name="url"
+            value={blogDetails.url}
+            onChange={handleChange}
+            placeholder="url"
+          />
         </div>
         <button>create</button>
       </form>

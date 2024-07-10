@@ -23,16 +23,7 @@ const Blogs = ({ blogs, deleteWithId, likeWithId }) => {
 }
 
 Blogs.propTypes = {
-  blogs: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
-      author: PropTypes.string,
-      url: PropTypes.string.isRequired,
-      likes: PropTypes.number,
-      user: PropTypes.shape({ name: PropTypes.string.isRequired }),
-    }).isRequired
-  ),
+  blogs: PropTypes.array.isRequired,
 }
 
 export default Blogs

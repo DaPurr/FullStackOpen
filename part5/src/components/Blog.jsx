@@ -7,6 +7,7 @@ const Blog = ({ blog, deleteWithId, likeWithId }) => {
     border: '1px solid black',
     padding: '10px',
     marginTop: '5px',
+    width: '20%',
   }
   const detailsStyle = {
     display: showDetails ? '' : 'none',
@@ -25,16 +26,21 @@ const Blog = ({ blog, deleteWithId, likeWithId }) => {
 
   return (
     <div style={blogStyle}>
-      <div>
-        {blog.title} {blog.author}
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <span>{blog.title}</span>
+        <span>{blog.author}</span>
       </div>
-      <div style={detailsStyle}>
-        <div>{blog.url}</div>
-        <div>likes: {blog.likes}</div>
-        <button onClick={() => likeWithId(blog.id)}>like</button>
-        <div>{blog.user.name}</div>
-      </div>
-      <button onClick={toggleDetails}>
+      {showDetails && (
+        <div style={detailsStyle}>
+          <div data-testid="blog-url">{blog.url}</div>
+          <div data-testid="blog-likes">likes: {blog.likes}</div>
+          <button data-testid="blog-like" onClick={() => likeWithId(blog.id)}>
+            like
+          </button>
+          <div>{blog.user.name}</div>
+        </div>
+      )}
+      <button data-testid="blog-viewhide" onClick={toggleDetails}>
         {showDetails ? textExpanded : textNotExpanded}
       </button>
       <button onClick={handleDelete}>delete</button>

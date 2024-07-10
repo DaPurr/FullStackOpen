@@ -65,7 +65,21 @@ const App = () => {
   }
 
   const findAllBlogs = async () => {
-    setBlogs(await blogService.getAll())
+    const allBlogs = await blogService.getAll()
+    setBlogs(allBlogs)
+  }
+
+  const addBlog = async (title, author, url) => {
+    if (title.length === 0) return pushNotification('title must be filled in')
+    if (url.length === 0) return pushNotification('author must be filled in')
+
+    try {
+      const addedBlog = await blogService.addBlog(title, author, url)
+      setBlogs(blogs.concat(addedBlog))
+      pushNotification(`A new blog ${title} by ${author} added`, 'success')
+    } catch (error) {
+      pushNotification(error.message, 'error')
+    }
   }
 
   useEffect(() => {
@@ -93,7 +107,7 @@ const App = () => {
           <BlogForm
             setBlogs={setBlogs}
             pushNotification={pushNotification}
-            addBlog={blog => setBlogs(blogs.concat(blog))}
+            addBlog={addBlog}
           />
         </Togglable>
         <Blogs
