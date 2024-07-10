@@ -70,6 +70,7 @@ const App = () => {
 
   useEffect(() => {
     setUser(window.localStorage.getItem('name'))
+    findAllBlogs()
   }, [])
 
   if (user === null) {

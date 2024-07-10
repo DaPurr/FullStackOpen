@@ -1,11 +1,13 @@
 import Blog from './Blog'
+import PropTypes from 'prop-types'
 
 const Blogs = ({ blogs, deleteWithId, likeWithId }) => {
   const sortedBlogs = [...blogs].sort((blogA, blogB) => {
-    const likesA = blogA.likes ? blogA.likes : 0
-    const likesB = blogB.likes ? blogB.likes : 0
+    const likesA = blogA.likes ?? 0
+    const likesB = blogB.likes ?? 0
     return likesB - likesA
   })
+
   return (
     <div>
       {sortedBlogs.map(blog => (
@@ -18,6 +20,19 @@ const Blogs = ({ blogs, deleteWithId, likeWithId }) => {
       ))}
     </div>
   )
+}
+
+Blogs.propTypes = {
+  blogs: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+      author: PropTypes.string,
+      url: PropTypes.string.isRequired,
+      likes: PropTypes.number,
+      user: PropTypes.shape({ name: PropTypes.string.isRequired }),
+    }).isRequired
+  ),
 }
 
 export default Blogs

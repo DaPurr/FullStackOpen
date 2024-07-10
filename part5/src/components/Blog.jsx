@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 const Blog = ({ blog, deleteWithId, likeWithId }) => {
-  const [isShowDetails, setIsShowDetails] = useState(false)
+  const [showDetails, setShowDetails] = useState(false)
 
   const blogStyle = {
     border: '1px solid black',
@@ -9,14 +9,16 @@ const Blog = ({ blog, deleteWithId, likeWithId }) => {
     marginTop: '5px',
   }
   const detailsStyle = {
-    display: isShowDetails ? '' : 'none',
+    display: showDetails ? '' : 'none',
   }
 
-  const onDelete = () => {
+  const handleDelete = () => {
     if (window.confirm(`Remove ${blog.title} by ${blog.author}?`)) {
       deleteWithId(blog.id)
     }
   }
+
+  const toggleDetails = () => setShowDetails(!showDetails)
 
   const textExpanded = 'hide'
   const textNotExpanded = 'view'
@@ -32,10 +34,10 @@ const Blog = ({ blog, deleteWithId, likeWithId }) => {
         <button onClick={() => likeWithId(blog.id)}>like</button>
         <div>{blog.user.name}</div>
       </div>
-      <button onClick={() => setIsShowDetails(!isShowDetails)}>
-        {isShowDetails ? textExpanded : textNotExpanded}
+      <button onClick={toggleDetails}>
+        {showDetails ? textExpanded : textNotExpanded}
       </button>
-      <button onClick={onDelete}>delete</button>
+      <button onClick={handleDelete}>delete</button>
     </div>
   )
 }

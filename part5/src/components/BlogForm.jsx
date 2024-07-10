@@ -3,34 +3,37 @@ import { useEffect, useState } from 'react'
 import blogService from '../services/blogs'
 
 const BlogForm = ({ setBlogs, pushNotification, addBlog }) => {
-  const [title, setTitle] = useState(null)
-  const [author, setAuthor] = useState(null)
-  const [url, setUrl] = useState(null)
+  const [blogDetails, setBlogDetails] = useState({
+    title: '',
+    author: '',
+    url: '',
+  })
 
-  const onTitleChange = event => {
-    setTitle(event.target.value)
-  }
-
-  const onAuthorChange = event => {
-    setAuthor(event.target.value)
-  }
-
-  const onUrlChange = event => {
-    setUrl(event.target.value)
+  const handleChange = event => {
+    const { name, value } = event.target
+    setBlogDetails({ ...blogDetails, [name]: value })
   }
 
   const handleSubmit = async event => {
     event.preventDefault()
 
-    if (!title || title.length == 0)
+    if (blogDetails.title.length === 0)
       return pushNotification('title must be filled in')
-    if (!url || url.length == 0)
+    if (blogDetails.url.length === 0)
       return pushNotification('author must be filled in')
 
     try {
-      const addedBlog = await blogService.addBlog(title, author, url)
+      const addedBlog = await blogService.addBlog(
+        blogDetails.title,
+        blogDetails.author,
+        blogDetails.url
+      )
       addBlog(addedBlog)
-      pushNotification(`A new blog ${title} by ${author} added`, 'success')
+      pushNotification(
+        `A new blog ${blogDetails.title} by ${blogDetails.author} added`,
+        'success'
+      )
+      setBlogDetails({ title: '', author: '', url: '' })
     } catch (error) {
       pushNotification(error.message, 'error')
     }
@@ -46,15 +49,23 @@ const BlogForm = ({ setBlogs, pushNotification, addBlog }) => {
         <h2>create new</h2>
         <div>
           <label>title:</label>
-          <input onChange={onTitleChange} />
+          <input
+            name="title"
+            value={blogDetails.title}
+            onChange={handleChange}
+          />
         </div>
         <div>
           <label>author:</label>
-          <input onChange={onAuthorChange} />
+          <input
+            name="author"
+            value={blogDetails.author}
+            onChange={handleChange}
+          />
         </div>
         <div>
           <label>url:</label>
-          <input onChange={onUrlChange} />
+          <input name="url" value={blogDetails.url} onChange={handleChange} />
         </div>
         <button>create</button>
       </form>
