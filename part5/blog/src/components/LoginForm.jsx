@@ -6,11 +6,15 @@ const LoginForm = ({ onUsernameChange, onPasswordChange, handleLogin }) => {
         <form onSubmit={handleLogin}>
           <div>
             <label>Username:</label>
-            <input onChange={onUsernameChange} />
+            <input data-testid="username" onChange={onUsernameChange} />
           </div>
           <div>
             <label>Password:</label>
-            <input type="password" onChange={onPasswordChange} />
+            <input
+              data-testid="password"
+              type="password"
+              onChange={onPasswordChange}
+            />
           </div>
           <div>
             <button>login</button>

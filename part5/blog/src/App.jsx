@@ -34,7 +34,6 @@ const App = () => {
       pushNotification(`${name} logged in`, 'success')
       setUser(name)
     } catch (error) {
-      console.error('log in error:', error)
       pushNotification('wrong username or password', 'failure')
     }
   }
@@ -75,6 +74,7 @@ const App = () => {
 
     try {
       const addedBlog = await blogService.addBlog(title, author, url)
+      addedBlog.user = { name: window.localStorage.name }
       setBlogs(blogs.concat(addedBlog))
       pushNotification(`A new blog ${title} by ${author} added`, 'success')
     } catch (error) {
@@ -103,7 +103,7 @@ const App = () => {
       <div>
         <Notification message={notificationMessage} type={notificationStyle} />
         <Greeter user={user} handleLogout={handleLogout} />
-        <Togglable buttonText={'new note'}>
+        <Togglable buttonText={'new blog'}>
           <BlogForm
             setBlogs={setBlogs}
             pushNotification={pushNotification}

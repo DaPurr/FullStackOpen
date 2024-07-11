@@ -24,8 +24,12 @@ const Blog = ({ blog, deleteWithId, likeWithId }) => {
   const textExpanded = 'hide'
   const textNotExpanded = 'view'
 
+  const loggedInName = window.localStorage.getItem('name')
+
+  const showDelete = blog.user.name === loggedInName
+
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} data-testid="blog">
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <span>{blog.title}</span>
         <span>{blog.author}</span>
@@ -43,7 +47,7 @@ const Blog = ({ blog, deleteWithId, likeWithId }) => {
       <button data-testid="blog-viewhide" onClick={toggleDetails}>
         {showDetails ? textExpanded : textNotExpanded}
       </button>
-      <button onClick={handleDelete}>delete</button>
+      {showDelete && <button onClick={handleDelete}>delete</button>}
     </div>
   )
 }

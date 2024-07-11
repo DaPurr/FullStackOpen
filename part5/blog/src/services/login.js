@@ -5,7 +5,7 @@ const login = async (username, password) => {
   try {
     loginResponse = await axios.post('/api/login', { username, password })
   } catch (error) {
-    console.error('login error:', error)
+    return
   }
   return loginResponse.data
 }

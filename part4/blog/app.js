@@ -10,6 +10,7 @@ const {
 const loginRouter = require('./controllers/login')
 const blogRouter = require('./controllers/blog')
 const userRouter = require('./controllers/user')
+const testingRouter = require('./controllers/testing')
 const mongoose = require('mongoose')
 const { info, error } = require('./utils/logger')
 const { MONGODB_URL, TEST_MONGODB_URL, NODE_ENV } = require('./utils/config')
@@ -29,6 +30,10 @@ app.use(tokenExtractor)
 app.use('/api/login', loginRouter)
 app.use('/api/blogs', blogRouter)
 app.use('/api/users', userRouter)
+
+if (process.env.NODE_ENV === 'test') {
+  app.use('/api/testing', testingRouter)
+}
 
 app.use(unknownEndpoint)
 app.use(errorHandler)
