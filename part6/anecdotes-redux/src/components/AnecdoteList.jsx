@@ -16,7 +16,6 @@ const AnecdoteList = () => {
 
   const vote = id => {
     const anecdoteVotedFor = anecdotes.filter(anecdote => anecdote.id === id)[0]
-    console.log('anecdote voted for', anecdoteVotedFor)
     dispatch(voteFor(id))
     dispatch(setNotification(`you voted for ${anecdoteVotedFor.content}`))
     setTimeout(() => dispatch(setNotification('')), 3000)
