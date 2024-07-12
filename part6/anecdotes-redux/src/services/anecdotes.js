@@ -18,6 +18,14 @@ const createNew = async content => {
   return postedAnecdote
 }
 
+const vote = async id => {
+  const getResponse = await axios.get(`/api/anecdotes/${id}`)
+  const oldAnecdote = getResponse.data
+  const updatedAnecdote = { ...oldAnecdote, votes: oldAnecdote.votes + 1 }
+  await axios.put(`/api/anecdotes/${id}`, updatedAnecdote)
+  return updatedAnecdote
+}
+
 const generateId = () => Math.floor(Math.random() * 10_000)
 
-export default { findAll, createNew }
+export default { findAll, createNew, vote }
