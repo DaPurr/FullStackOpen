@@ -29,7 +29,10 @@ const anecdoteSlice = createSlice({
     voteFor(state, action) {
       return state.map(anecdote => {
         if (anecdote.id === action.payload) {
-          const newAnecdote = { ...anecdote, votes: anecdote.votes + 1 }
+          const newAnecdote = {
+            ...anecdote,
+            votes: anecdote.votes + 1,
+          }
           return newAnecdote
         }
         return anecdote

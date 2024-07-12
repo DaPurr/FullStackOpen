@@ -4,7 +4,6 @@ import { setFilter } from '../reducers/filterReducer'
 const Filter = () => {
   const dispatch = useDispatch()
   const filterText = useSelector(state => state.filter)
-  console.log('filterText:', filterText)
 
   const filter = event => {
     dispatch(setFilter(event.target.value))
