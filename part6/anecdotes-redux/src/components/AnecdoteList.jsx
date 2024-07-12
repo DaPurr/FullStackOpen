@@ -17,8 +17,7 @@ const AnecdoteList = () => {
   const vote = id => {
     const anecdoteVotedFor = anecdotes.filter(anecdote => anecdote.id === id)[0]
     dispatch(voteFor(id))
-    dispatch(setNotification(`you voted for ${anecdoteVotedFor.content}`))
-    setTimeout(() => dispatch(setNotification('')), 3000)
+    dispatch(setNotification(`you voted for ${anecdoteVotedFor.content}`, 3000))
   }
 
   return sortedAnecdotes.map(anecdote => (
