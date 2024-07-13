@@ -33,12 +33,22 @@
     {
       "id": 442368,
       "content": "aeuaeou",
-      "votes": 0
+      "votes": 1
     },
     {
       "id": 445226,
       "content": "aeuaaou",
       "votes": 17
+    },
+    {
+      "id": 744552,
+      "content": "test",
+      "votes": 1
+    },
+    {
+      "id": 38547,
+      "content": "test",
+      "votes": 0
     }
   ]
 }
