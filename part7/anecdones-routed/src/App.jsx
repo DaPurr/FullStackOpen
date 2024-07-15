@@ -1,10 +1,32 @@
-import { useState } from "react";
-import { Link, Route, Routes } from "react-router-dom";
+import { useState } from 'react'
+import { Link, Route, Routes, useMatch, useNavigate } from 'react-router-dom'
+
+const anecdotesDB = [
+  {
+    content: 'If it hurts, do it more often',
+    author: 'Jez Humble',
+    info: 'https://martinfowler.com/bliki/FrequencyReducesDifficulty.html',
+    votes: 0,
+    id: 1,
+  },
+  {
+    content: 'Premature optimization is the root of all evil',
+    author: 'Donald Knuth',
+    info: 'http://wiki.c2.com/?PrematureOptimization',
+    votes: 0,
+    id: 2,
+  },
+]
+
+const anecdoteById = id =>
+  anecdotesDB.find(a => {
+    return a.id === id
+  })
 
 const Menu = () => {
   const padding = {
     paddingRight: 5,
-  };
+  }
   return (
     <div>
       <Link to="/" style={padding}>
@@ -17,19 +39,21 @@ const Menu = () => {
         about
       </Link>
     </div>
-  );
-};
+  )
+}
 
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map((anecdote) => (
-        <li key={anecdote.id}>{anecdote.content}</li>
+      {anecdotes.map(anecdote => (
+        <li key={anecdote.id}>
+          <Link to={`/${anecdote.id}`}>{anecdote.content}</Link>
+        </li>
       ))}
     </ul>
   </div>
-);
+)
 
 const About = () => (
   <div>
@@ -51,33 +75,33 @@ const About = () => (
       find the best and add more.
     </p>
   </div>
-);
+)
 
 const Footer = () => (
   <div>
     Anecdote app for <a href="https://fullstackopen.com/">Full Stack Open</a>.
-    See{" "}
+    See{' '}
     <a href="https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js">
       https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js
-    </a>{" "}
+    </a>{' '}
     for the source code.
   </div>
-);
+)
 
-const CreateNew = (props) => {
-  const [content, setContent] = useState("");
-  const [author, setAuthor] = useState("");
-  const [info, setInfo] = useState("");
+const CreateNew = props => {
+  const [content, setContent] = useState('')
+  const [author, setAuthor] = useState('')
+  const [info, setInfo] = useState('')
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = e => {
+    e.preventDefault()
     props.addNew({
       content,
       author,
       info,
       votes: 0,
-    });
-  };
+    })
+  }
 
   return (
     <div>
@@ -88,7 +112,7 @@ const CreateNew = (props) => {
           <input
             name="content"
             value={content}
-            onChange={(e) => setContent(e.target.value)}
+            onChange={e => setContent(e.target.value)}
           />
         </div>
         <div>
@@ -96,7 +120,7 @@ const CreateNew = (props) => {
           <input
             name="author"
             value={author}
-            onChange={(e) => setAuthor(e.target.value)}
+            onChange={e => setAuthor(e.target.value)}
           />
         </div>
         <div>
@@ -104,65 +128,84 @@ const CreateNew = (props) => {
           <input
             name="info"
             value={info}
-            onChange={(e) => setInfo(e.target.value)}
+            onChange={e => setInfo(e.target.value)}
           />
         </div>
         <button>create</button>
       </form>
     </div>
-  );
-};
+  )
+}
+
+const AnecdoteDetails = () => {
+  const match = useMatch('/:id')
+
+  const id = Number.parseInt(match.params.id)
+  console.log('id:', id)
+  console.log('anecdotes DB:', anecdotesDB)
+  const anecdoteToDisplay = match ? anecdoteById(id) : null
+  console.log('anecdote URL:', anecdoteToDisplay.info)
+
+  return (
+    anecdoteToDisplay && (
+      <div>
+        <h2>{anecdoteToDisplay.content}</h2>
+        <p>has {anecdoteToDisplay.votes} votes</p>
+        <p>
+          for more info, see{' '}
+          <Link to={anecdoteToDisplay.info}>{anecdoteToDisplay.info}</Link>
+        </p>
+      </div>
+    )
+  )
+}
+
+const Notification = ({ text }) => {
+  return text && <p>{text}</p>
+}
 
 const App = () => {
-  const [anecdotes, setAnecdotes] = useState([
-    {
-      content: "If it hurts, do it more often",
-      author: "Jez Humble",
-      info: "https://martinfowler.com/bliki/FrequencyReducesDifficulty.html",
-      votes: 0,
-      id: 1,
-    },
-    {
-      content: "Premature optimization is the root of all evil",
-      author: "Donald Knuth",
-      info: "http://wiki.c2.com/?PrematureOptimization",
-      votes: 0,
-      id: 2,
-    },
-  ]);
+  const [anecdotes, setAnecdotes] = useState(anecdotesDB)
 
-  const [notification, setNotification] = useState("");
+  const [notification, setNotification] = useState('')
 
-  const addNew = (anecdote) => {
-    anecdote.id = Math.round(Math.random() * 10000);
-    setAnecdotes(anecdotes.concat(anecdote));
-  };
+  const navigate = useNavigate()
 
-  const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
+  const addNew = anecdote => {
+    anecdote.id = Math.round(Math.random() * 10000)
+    anecdotesDB.push(anecdote)
+    setAnecdotes(anecdotesDB)
+    navigate('/')
 
-  const vote = (id) => {
-    const anecdote = anecdoteById(id);
+    setNotification(`a new anecdote ${anecdote.content} created!`)
+    setTimeout(() => setNotification(''), 5000)
+  }
+
+  const vote = id => {
+    const anecdote = anecdoteById(id)
 
     const voted = {
       ...anecdote,
       votes: anecdote.votes + 1,
-    };
+    }
 
-    setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)));
-  };
+    setAnecdotes(anecdotes.map(a => (a.id === id ? voted : a)))
+  }
 
   return (
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
+      <Notification text={notification} />
       <Routes>
         <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
         <Route path="/about" element={<About />} />
         <Route path="/create" element={<CreateNew addNew={addNew} />} />
+        <Route path="/:id" element={<AnecdoteDetails />} />
       </Routes>
       <Footer />
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App
