@@ -11,6 +11,7 @@ import notificationReducer, {
   clearNotification,
   setNotification,
 } from './reducers/notification'
+import { Container } from '@mui/material'
 
 const App = () => {
   const [notificationMessage, notificationDispatch] = useReducer(
@@ -75,14 +76,14 @@ const App = () => {
 
   if (user === null) {
     return (
-      <div>
+      <Container>
         <Notification message={notificationMessage} type={notificationStyle} />
         <LoginForm
           onUsernameChange={onUsernameChange}
           onPasswordChange={onPasswordChange}
           handleLogin={handleLogin}
         />
-      </div>
+      </Container>
     )
   } else {
     return (

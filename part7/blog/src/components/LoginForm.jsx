@@ -1,3 +1,5 @@
+import { Button } from '@mui/material'
+
 const LoginForm = ({ onUsernameChange, onPasswordChange, handleLogin }) => {
   return (
     <div>
@@ -17,7 +19,9 @@ const LoginForm = ({ onUsernameChange, onPasswordChange, handleLogin }) => {
             />
           </div>
           <div>
-            <button>login</button>
+            <Button variant="contained" type="submit">
+              login
+            </Button>
           </div>
         </form>
       </div>

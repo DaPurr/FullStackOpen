@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import blogService from '../services/blogs'
+import { Button } from '@mui/material'
 
 const BlogForm = () => {
   const queryClient = useQueryClient()
@@ -60,7 +61,9 @@ const BlogForm = () => {
             placeholder="url"
           />
         </div>
-        <button>create</button>
+        <Button variant="contained" type="submit">
+          create
+        </Button>
       </form>
     </div>
   )

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
+import { Button } from '@mui/material'
 
 const Togglable = ({ buttonText, children }) => {
   const [visible, setVisible] = useState(false)
@@ -10,11 +11,17 @@ const Togglable = ({ buttonText, children }) => {
 
   return (
     <div>
-      {!visible && <button onClick={toggleVisibility}>{buttonText}</button>}
+      {!visible && (
+        <Button variant="contained" onClick={toggleVisibility}>
+          {buttonText}
+        </Button>
+      )}
       {visible && (
         <div>
           {children}
-          <button onClick={toggleVisibility}>cancel</button>
+          <Button variant="contained" onClick={toggleVisibility}>
+            cancel
+          </Button>
         </div>
       )}
     </div>
