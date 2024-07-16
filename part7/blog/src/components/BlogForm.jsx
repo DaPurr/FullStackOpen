@@ -1,6 +1,15 @@
 import { useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import blogService from '../services/blogs'
 
-const BlogForm = ({ addBlog }) => {
+const BlogForm = () => {
+  const queryClient = useQueryClient()
+  const newBlogMutation = useMutation({
+    mutationFn: blogService.addBlog,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['blogs'] }),
+    onError: error => console.error('error creating new blog:', error),
+  })
+
   const [blogDetails, setBlogDetails] = useState({
     title: '',
     author: '',
@@ -14,7 +23,9 @@ const BlogForm = ({ addBlog }) => {
 
   const handleSubmit = async event => {
     event.preventDefault()
-    addBlog(blogDetails.title, blogDetails.author, blogDetails.url)
+    newBlogMutation.mutate({
+      ...blogDetails,
+    })
     setBlogDetails({ title: '', author: '', url: '' })
   }
 

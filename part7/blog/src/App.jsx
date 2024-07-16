@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useReducer } from 'react'
 import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import Blogs from './components/Blogs'
@@ -7,13 +7,19 @@ import Greeter from './components/Greeter'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
+import notificationReducer, {
+  clearNotification,
+  setNotification,
+} from './reducers/notification'
 
 const App = () => {
+  const [notificationMessage, notificationDispatch] = useReducer(
+    notificationReducer,
+    null
+  )
   const [username, setUsername] = useState(null)
   const [password, setPassword] = useState(null)
-  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [notificationMessage, setNotificationMessage] = useState(null)
   const [notificationStyle, setNotificationStyle] = useState(null)
 
   const onUsernameChange = event => {
@@ -55,36 +61,16 @@ const App = () => {
   }
 
   const pushNotification = (message, style) => {
-    setNotificationMessage(message)
+    notificationDispatch(setNotification(message))
     setNotificationStyle(style)
     setTimeout(() => {
-      setNotificationMessage(null)
+      notificationDispatch(clearNotification())
       setNotificationStyle(null)
     }, 3000)
   }
 
-  const findAllBlogs = async () => {
-    const allBlogs = await blogService.getAll()
-    setBlogs(allBlogs)
-  }
-
-  const addBlog = async (title, author, url) => {
-    if (title.length === 0) return pushNotification('title must be filled in')
-    if (url.length === 0) return pushNotification('author must be filled in')
-
-    try {
-      const addedBlog = await blogService.addBlog(title, author, url)
-      addedBlog.user = { name: window.localStorage.name }
-      setBlogs(blogs.concat(addedBlog))
-      pushNotification(`A new blog ${title} by ${author} added`, 'success')
-    } catch (error) {
-      pushNotification(error.message, 'error')
-    }
-  }
-
   useEffect(() => {
     setUser(window.localStorage.getItem('name'))
-    findAllBlogs()
   }, [])
 
   if (user === null) {
@@ -104,19 +90,9 @@ const App = () => {
         <Notification message={notificationMessage} type={notificationStyle} />
         <Greeter user={user} handleLogout={handleLogout} />
         <Togglable buttonText={'new blog'}>
-          <BlogForm
-            setBlogs={setBlogs}
-            pushNotification={pushNotification}
-            addBlog={addBlog}
-          />
+          <BlogForm />
         </Togglable>
-        <Blogs
-          blogs={blogs}
-          user={user}
-          handleLogout={handleLogout}
-          deleteWithId={deleteWithId}
-          likeWithId={likeWithId}
-        />
+        <Blogs />
       </div>
     )
   }

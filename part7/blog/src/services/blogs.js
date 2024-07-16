@@ -6,7 +6,11 @@ const getAll = () => {
   return request.then(response => response.data).catch(error => [])
 }
 
-const addBlog = async (title, author, url) => {
+const addBlog = async ({ title, author, url }) => {
+  console.log('title:', title)
+  console.log('author:', author)
+  console.log('url:', url)
+
   const jwt = window.localStorage.getItem('jwt')
 
   try {
